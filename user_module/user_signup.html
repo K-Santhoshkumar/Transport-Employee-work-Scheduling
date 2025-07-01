@@ -3,15 +3,155 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>User Registration - Transport Management</title>
+    <title>Create Account - Transport Management</title>
     <link rel="icon" href="../admin_module/assets/bus-logo-vector-icon-illustration_683738-4015.jpg" type="image/x-icon" />
     <link rel="stylesheet" href="user.css" type="text/css" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        main {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem 1rem;
+        }
+        
+        .auth-container {
+            background: var(--surface);
+            padding: 3rem;
+            border-radius: var(--border-radius-xl);
+            box-shadow: var(--shadow-xl);
+            width: 100%;
+            max-width: 420px;
+            border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .auth-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--success-color), var(--accent-color));
+        }
+        
+        .auth-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .auth-icon {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, var(--success-color), var(--accent-color));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 1.5rem;
+            color: white;
+        }
+        
+        .auth-title {
+            font-size: 1.875rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .auth-subtitle {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        
+        .form-group i {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+            font-size: 0.875rem;
+        }
+        
+        .form-group input {
+            padding-left: 2.5rem;
+        }
+        
+        .auth-links {
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+        
+        .auth-links p {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+        
+        .auth-links a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.875rem;
+            transition: var(--transition);
+        }
+        
+        .auth-links a:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
+        
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 1.5rem 0;
+            color: var(--text-light);
+        }
+        
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+        
+        .divider span {
+            padding: 0 1rem;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .signup-button {
+            background: linear-gradient(135deg, var(--success-color), #047857);
+        }
+        
+        .signup-button:hover {
+            background: linear-gradient(135deg, #047857, #065f46);
+        }
+    </style>
 </head>
 <body>
     <header>
         <div class="top-bar">
-            <h2>Transport Manager</h2>
+            <h2><i class="fas fa-bus"></i> Transport Manager</h2>
             <nav class="sign_user">
                 <a href="user_login.html">
                     <i class="fas fa-sign-in-alt"></i>
@@ -26,25 +166,44 @@
     </header>
     
     <main>
-        <div class="container">
-            <form name="user_signup" action="user_signup.php" method="post" autocomplete="off">
-                <h1 class="title-text">
+        <div class="auth-container">
+            <div class="auth-header">
+                <div class="auth-icon">
                     <i class="fas fa-user-plus"></i>
-                    Join Us
-                </h1>
-                <p>Create your account to get started</p>
+                </div>
+                <h1 class="auth-title">Join Our Team</h1>
+                <p class="auth-subtitle">Create your account to get started with transport management</p>
+            </div>
+            
+            <form name="user_signup" action="user_signup.php" method="post" autocomplete="off">
+                <div class="form-group">
+                    <i class="fas fa-user"></i>
+                    <input type="text" name="username" placeholder="Enter your full name" required />
+                </div>
                 
-                <input type="text" name="username" placeholder="Enter your full name" required />
-                <input type="email" name="email" placeholder="Enter your email address" required />
-                <input type="password" name="password" placeholder="Create a secure password (min. 8 characters)" required />
+                <div class="form-group">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" name="email" placeholder="Enter your email address" required />
+                </div>
                 
-                <button type="submit">
+                <div class="form-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" name="password" placeholder="Create a secure password (min. 8 characters)" required />
+                </div>
+                
+                <button type="submit" class="signup-button">
                     <i class="fas fa-user-plus"></i>
                     Create Account
                 </button>
                 
-                <p>Already have an account?</p>
-                <a href="user_login.html">Sign in here</a>
+                <div class="divider">
+                    <span>or</span>
+                </div>
+                
+                <div class="auth-links">
+                    <p>Already have an account?</p>
+                    <a href="user_login.html">Sign in here</a>
+                </div>
             </form>
         </div>
     </main>

@@ -1,16 +1,22 @@
 <?php
-session_start();
-include '..\admin_module\database_connect.php';
+include('./user_middleware.php');
+middleware();
+include('../admin_module/database_connect.php');
+
 if (!isset($_SESSION['user_id'])) {
     header('Location: user_login.php'); 
     exit();
 }
+
 $user_id = $_SESSION['user_id'];
 $query = "SELECT employee.name AS emp_name, employee.email, employee.phone, 
-                 employee.designation, employee.department, employee.status 
+                 employee.designation, employee.department, employee.status,
+                 employee.batch_no, employee.bus_number, employee.shift_time,
+                 employee.working_date, employee.route, employee.co_partner
           FROM employee 
           JOIN user ON employee.id = user.id 
           WHERE user.id = ?";
+
 if ($stmt = $conn->prepare($query)) {
     $stmt->bind_param("i", $user_id);
     $stmt->execute();
@@ -21,76 +27,442 @@ if ($stmt = $conn->prepare($query)) {
     die("Database query failed.");
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>USER PROFILE</title>
+    <title>My Profile - Transport Management</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="user.css">
     <style>
-        /* Use the same style as user_about.php */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background-color:#ffdfb9; min-height: 100vh; font-family: "Poppins", sans-serif; display: flex; flex-direction: column; }
-        .nav { background: rgb(35, 178, 225); display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 1rem; position: sticky; top: 0; z-index: 1000; box-shadow: 0 0.4rem 0.6rem rgba(0, 0, 0, 0.2); }
-        .top-bar { display: flex; align-items: center; gap: 1rem; }
-        .top-bar h2 { color: black; font-size: 1.5rem; font-weight: bold; font-variant: small-caps; }
-        .pages { display: flex; gap: 1rem; }
-        .pages a { text-decoration: none; background-color: white; color: black; border: 1px solid rgb(35, 178, 225); padding: 0.5rem 1rem; font-weight: bold; border-radius: 0.5rem; transition: 0.3s ease-in-out; }
-        .pages a:hover { background: linear-gradient(to right,rgb(100, 206, 103),rgb(64, 200, 234)); color: white; transform: scale(1.05); box-shadow: 0 0.4rem 1rem rgba(0, 0, 0, 0.3); }
-        .active-link { background: linear-gradient(to right,rgb(78, 239, 236),rgb(201, 76, 223)); color: white; border: 2px solid white; transform: scale(1.1); font-weight: bold; padding: 0.5rem 1.2rem; }
-        .menu-toggle { display: none; font-size: 1.8rem; color: #ffdfb9; cursor: pointer; background: none; border: none; }
-        footer{ background-color: rgb(35, 178, 225); color: white; text-align: center; padding: 1rem; margin-top: auto; }
-        @media (max-width: 768px) { .pages { display: none; flex-direction: column; position: absolute; top: 60px; left: 0; width: 100%; background: rgb(35, 178, 225); padding: 1rem 0; text-align: center; } .pages a { display: block; padding: 1rem; margin: 0.5rem; } .menu-toggle { display: block; } .nav.active .pages { display: flex; } }
-        .body{ background-image: url("./assets/photo-1544620347-c4fd4a3d5957.jpg"); width: 100%; height: auto; background-size: cover; background-position: center; }
-        .main { text-align: center; padding: 1rem; flex-grow: 1; color: white; font-size: 1.5rem; }
-        .main h1{ font-size: 4rem; }
-        .profile-container { background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); width: 45%; text-align: center; color: black; margin: 2rem auto; }
-        .profile-container h2 { color: rgb(35, 178, 225); margin-bottom: 1rem; }
-        .profile-container p { font-size: 1.1rem; color: #333; margin: 0.5rem 0; }
-        .profile-container a { display: inline-block; margin-top: 1rem; padding: 0.75rem 1.5rem; background: rgb(35, 178, 225); color: white; border-radius: 0.5rem; text-decoration: none; font-weight: bold; transition: 0.3s; }
-        .profile-container a:hover { background: linear-gradient(to right,rgb(78, 239, 236),rgb(201, 76, 223)); color: white; }
+        .profile-container {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .profile-sidebar {
+            background: var(--surface);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            padding: 2rem;
+            text-align: center;
+            height: fit-content;
+        }
+        
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 3rem;
+            color: white;
+            font-weight: 700;
+        }
+        
+        .profile-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .profile-designation {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .profile-status {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+            margin-bottom: 1.5rem;
+        }
+        
+        .status-active {
+            background: rgba(5, 150, 105, 0.1);
+            color: var(--success-color);
+            border: 1px solid var(--success-color);
+        }
+        
+        .status-inactive {
+            background: rgba(220, 38, 38, 0.1);
+            color: var(--danger-color);
+            border: 1px solid var(--danger-color);
+        }
+        
+        .edit-profile-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            transition: var(--transition);
+        }
+        
+        .edit-profile-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow);
+        }
+        
+        .profile-details {
+            background: var(--surface);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+        
+        .details-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            background: var(--surface-hover);
+        }
+        
+        .details-header h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .details-content {
+            padding: 1.5rem;
+        }
+        
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .detail-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .detail-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .detail-value {
+            font-size: 1rem;
+            color: var(--text-primary);
+            font-weight: 500;
+            padding: 0.5rem 0;
+        }
+        
+        .detail-value.empty {
+            color: var(--text-light);
+            font-style: italic;
+        }
+        
+        .stats-section {
+            background: var(--surface);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+        
+        .stats-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            background: var(--surface-hover);
+        }
+        
+        .stats-header h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 0;
+        }
+        
+        .stat-item {
+            padding: 1.5rem;
+            text-align: center;
+            border-right: 1px solid var(--border);
+        }
+        
+        .stat-item:last-child {
+            border-right: none;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            margin-bottom: 0.25rem;
+        }
+        
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+        }
+        
+        @media (max-width: 768px) {
+            .profile-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .details-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .stat-item {
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+            }
+            
+            .stat-item:nth-child(odd) {
+                border-right: 1px solid var(--border);
+            }
+            
+            .stat-item:last-child,
+            .stat-item:nth-last-child(2) {
+                border-bottom: none;
+            }
+        }
     </style>
 </head>
-<body class="body">
-<header>
-    <div class="nav">
-    <div class="top-bar">
-        <button class="menu-toggle" onclick="toggleMenu()">☰</button>
-        <h2>Project 1</h2>
-        </div>
-        <?php $current_page = basename($_SERVER['PHP_SELF']); ?>
-        <nav class="pages">
-            <a href="./user_welcome.php" class="<?= ($current_page == 'user_welcome.php') ? 'active-link' : '' ?>">HOME</a>
-            <a href="./user_search.php" class="<?= ($current_page == 'user_search.php') ? 'active-link' : '' ?>">SEARCH</a>
-            <a href="./user_profile.php" class="<?= ($current_page == 'user_profile.php') ? 'active-link' : '' ?>">PROFILE</a>
-            <a href="./user_contact.php" class="<?= ($current_page == 'user_contact.php') ? 'active-link' : '' ?>">CONTACT</a>
-            <a href="./user_about.php" class="<?= ($current_page == 'user_about.php') ? 'active-link' : '' ?>">ABOUT</a>
-            <a href="./user_logout.php">LOGOUT</a>
+<body>
+    <header>
+        <nav class="nav">
+            <div class="nav-container">
+                <a href="#" class="logo">
+                    <i class="fas fa-bus"></i>
+                    <span>Transport Manager</span>
+                </a>
+                
+                <button class="menu-toggle" onclick="toggleMenu()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                
+                <?php $current_page = basename($_SERVER['PHP_SELF']); ?>
+                <ul class="nav-links">
+                    <li><a href="./user_welcome.php" class="<?= ($current_page == 'user_welcome.php') ? 'active' : '' ?>">
+                        <i class="fas fa-home"></i> <span>Home</span>
+                    </a></li>
+                    <li><a href="./user_search.php" class="<?= ($current_page == 'user_search.php') ? 'active' : '' ?>">
+                        <i class="fas fa-search"></i> <span>Search</span>
+                    </a></li>
+                    <li><a href="./user_profile.php" class="<?= ($current_page == 'user_profile.php') ? 'active' : '' ?>">
+                        <i class="fas fa-user"></i> <span>Profile</span>
+                    </a></li>
+                    <li><a href="./user_contact.php" class="<?= ($current_page == 'user_contact.php') ? 'active' : '' ?>">
+                        <i class="fas fa-envelope"></i> <span>Contact</span>
+                    </a></li>
+                    <li><a href="./user_about.php" class="<?= ($current_page == 'user_about.php') ? 'active' : '' ?>">
+                        <i class="fas fa-info-circle"></i> <span>About</span>
+                    </a></li>
+                    <li><a href="./user_logout.php" class="logout">
+                        <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+                    </a></li>
+                </ul>
+            </div>
         </nav>
-    </div>
-</header>
-<main>
-    <div class="main">
-        <h1>User Profile</h1>
-        <br>
-        <hr><br>
+    </header>
+    
+    <main>
+        <section class="hero">
+            <div class="hero-content">
+                <h1>My Profile</h1>
+                <p>View and manage your personal information and employment details.</p>
+            </div>
+        </section>
+        
         <div class="profile-container">
-            <h2>User Profile</h2>
-            <p><strong>Name:</strong> <?php echo htmlspecialchars($user['emp_name']); ?></p>
-            <p><strong>Email:</strong> <?php echo htmlspecialchars($user['email']); ?></p>
-            <p><strong>Phone:</strong> <?php echo htmlspecialchars($user['phone']); ?></p>
-            <p><strong>Designation:</strong> <?php echo htmlspecialchars($user['designation']); ?></p>
-            <p><strong>Department:</strong> <?php echo htmlspecialchars($user['department']); ?></p>
-            <p><strong>Status:</strong> <?php echo htmlspecialchars($user['status']); ?></p>
-            <a href="./user_profile_edit.php">Edit Profile</a>
+            <div class="profile-sidebar">
+                <div class="profile-avatar">
+                    <?php echo strtoupper(substr($user['emp_name'], 0, 2)); ?>
+                </div>
+                <h2 class="profile-name"><?php echo htmlspecialchars($user['emp_name']); ?></h2>
+                <p class="profile-designation"><?php echo htmlspecialchars($user['designation']); ?></p>
+                <div class="profile-status <?php echo strtolower($user['status']) === 'active' ? 'status-active' : 'status-inactive'; ?>">
+                    <i class="fas fa-circle" style="font-size: 0.5rem; margin-right: 0.5rem;"></i>
+                    <?php echo htmlspecialchars($user['status']); ?>
+                </div>
+                <a href="./user_profile_edit.php" class="edit-profile-btn">
+                    <i class="fas fa-edit"></i>
+                    Edit Profile
+                </a>
+            </div>
+            
+            <div class="profile-details">
+                <div class="details-header">
+                    <h3><i class="fas fa-info-circle"></i> Personal Information</h3>
+                </div>
+                <div class="details-content">
+                    <div class="details-grid">
+                        <div class="detail-group">
+                            <div class="detail-label">
+                                <i class="fas fa-envelope"></i>
+                                Email Address
+                            </div>
+                            <div class="detail-value"><?php echo htmlspecialchars($user['email']); ?></div>
+                        </div>
+                        
+                        <div class="detail-group">
+                            <div class="detail-label">
+                                <i class="fas fa-phone"></i>
+                                Phone Number
+                            </div>
+                            <div class="detail-value"><?php echo htmlspecialchars($user['phone']); ?></div>
+                        </div>
+                        
+                        <div class="detail-group">
+                            <div class="detail-label">
+                                <i class="fas fa-building"></i>
+                                Department
+                            </div>
+                            <div class="detail-value"><?php echo htmlspecialchars($user['department']); ?></div>
+                        </div>
+                        
+                        <div class="detail-group">
+                            <div class="detail-label">
+                                <i class="fas fa-id-badge"></i>
+                                Batch Number
+                            </div>
+                            <div class="detail-value"><?php echo htmlspecialchars($user['batch_no'] ?? 'Not assigned'); ?></div>
+                        </div>
+                        
+                        <div class="detail-group">
+                            <div class="detail-label">
+                                <i class="fas fa-bus"></i>
+                                Bus Number
+                            </div>
+                            <div class="detail-value <?php echo empty($user['bus_number']) ? 'empty' : ''; ?>">
+                                <?php echo htmlspecialchars($user['bus_number'] ?? 'Not assigned'); ?>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-group">
+                            <div class="detail-label">
+                                <i class="fas fa-clock"></i>
+                                Shift Time
+                            </div>
+                            <div class="detail-value"><?php echo htmlspecialchars($user['shift_time']); ?></div>
+                        </div>
+                        
+                        <div class="detail-group">
+                            <div class="detail-label">
+                                <i class="fas fa-calendar"></i>
+                                Start Date
+                            </div>
+                            <div class="detail-value"><?php echo date('M d, Y', strtotime($user['working_date'])); ?></div>
+                        </div>
+                        
+                        <div class="detail-group">
+                            <div class="detail-label">
+                                <i class="fas fa-route"></i>
+                                Route
+                            </div>
+                            <div class="detail-value <?php echo empty($user['route']) ? 'empty' : ''; ?>">
+                                <?php echo htmlspecialchars($user['route'] ?? 'Not assigned'); ?>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-group">
+                            <div class="detail-label">
+                                <i class="fas fa-user-friends"></i>
+                                Co-Partner
+                            </div>
+                            <div class="detail-value <?php echo empty($user['co_partner']) ? 'empty' : ''; ?>">
+                                <?php echo htmlspecialchars($user['co_partner'] ?? 'Not assigned'); ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
-</main>
-<footer>&copy; <?php echo date('Y'); ?> All Rights Reserved.</footer>
-<script>
-    function toggleMenu() {
-        document.querySelector(".nav").classList.toggle("active");
-    }
-</script>
+        
+        <div class="stats-section">
+            <div class="stats-header">
+                <h3><i class="fas fa-chart-bar"></i> Quick Stats</h3>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value"><?php echo date('Y') - date('Y', strtotime($user['working_date'])); ?></div>
+                    <div class="stat-label">Years of Service</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value"><?php echo date('z') + 1; ?></div>
+                    <div class="stat-label">Days This Year</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value"><?php echo $user['status'] === 'Active' ? '100' : '0'; ?>%</div>
+                    <div class="stat-label">Availability</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value"><?php echo !empty($user['bus_number']) ? '1' : '0'; ?></div>
+                    <div class="stat-label">Assigned Buses</div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <footer>
+        <p>&copy; 2025 Transport Management System. All rights reserved.</p>
+    </footer>
+
+    <script>
+        function toggleMenu() {
+            const navLinks = document.querySelector('.nav-links');
+            navLinks.classList.toggle('active');
+        }
+
+        // Close menu when clicking outside
+        document.addEventListener('click', function(e) {
+            const nav = document.querySelector('.nav');
+            const navLinks = document.querySelector('.nav-links');
+            
+            if (!nav.contains(e.target)) {
+                navLinks.classList.remove('active');
+            }
+        });
+    </script>
 </body>
 </html>
