@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Login - Transport Management</title>
+    <link rel="icon" href="../admin_module/assets/bus-logo-vector-icon-illustration_683738-4015.jpg" type="image/x-icon" />
+    <link rel="stylesheet" href="user.css" type="text/css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="top-bar">
+            <h2>Transport Manager</h2>
+            <nav class="sign_user">
+                <a href="user_signup.html">
+                    <i class="fas fa-user-plus"></i>
+                    Sign Up
+                </a>
+                <a href="../admin_module/admin_login.html">
+                    <i class="fas fa-shield-alt"></i>
+                    Admin Portal
+                </a>
+            </nav>
+        </div>
+    </header>
+    
+    <main>
+        <div class="container">
+            <form name="user_login" action="user_login.php" method="post" autocomplete="off">
+                <h1 class="title-text">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Welcome Back
+                </h1>
+                <p>Sign in to access your transport dashboard</p>
+                
+                <input type="email" name="email" placeholder="Enter your email address" required />
+                <input type="password" name="password" placeholder="Enter your password" required />
+                
+                <button type="submit">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Sign In
+                </button>
+                
+                <p>Don't have an account?</p>
+                <a href="user_signup.html">Create account now</a>
+            </form>
+        </div>
+    </main>
+    
+    <footer>
+        <p>&copy; 2025 Transport Management System. All rights reserved.</p>
+    </footer>
+</body>
+</html>

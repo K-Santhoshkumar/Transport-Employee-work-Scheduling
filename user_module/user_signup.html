@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Registration - Transport Management</title>
+    <link rel="icon" href="../admin_module/assets/bus-logo-vector-icon-illustration_683738-4015.jpg" type="image/x-icon" />
+    <link rel="stylesheet" href="user.css" type="text/css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="top-bar">
+            <h2>Transport Manager</h2>
+            <nav class="sign_user">
+                <a href="user_login.html">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Sign In
+                </a>
+                <a href="../admin_module/admin_login.html">
+                    <i class="fas fa-shield-alt"></i>
+                    Admin Portal
+                </a>
+            </nav>
+        </div>
+    </header>
+    
+    <main>
+        <div class="container">
+            <form name="user_signup" action="user_signup.php" method="post" autocomplete="off">
+                <h1 class="title-text">
+                    <i class="fas fa-user-plus"></i>
+                    Join Us
+                </h1>
+                <p>Create your account to get started</p>
+                
+                <input type="text" name="username" placeholder="Enter your full name" required />
+                <input type="email" name="email" placeholder="Enter your email address" required />
+                <input type="password" name="password" placeholder="Create a secure password (min. 8 characters)" required />
+                
+                <button type="submit">
+                    <i class="fas fa-user-plus"></i>
+                    Create Account
+                </button>
+                
+                <p>Already have an account?</p>
+                <a href="user_login.html">Sign in here</a>
+            </form>
+        </div>
+    </main>
+    
+    <footer>
+        <p>&copy; 2025 Transport Management System. All rights reserved.</p>
+    </footer>
+</body>
+</html>
