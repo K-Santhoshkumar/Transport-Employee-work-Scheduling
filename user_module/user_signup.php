@@ -271,6 +271,23 @@ mysqli_close($conn);
             text-align: center;
         }
 
+        .back-link {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            transition: var(--transition);
+        }
+
+        .back-link:hover {
+            color: var(--primary-color);
+        }
+
         @media (max-width: 480px) {
             .signup-container {
                 margin: 1rem;
@@ -285,6 +302,11 @@ mysqli_close($conn);
 </head>
 <body>
     <div class="signup-container">
+        <a href="../index.php" class="back-link">
+            <i class="fas fa-arrow-left"></i>
+            Back to Home
+        </a>
+        
         <div class="signup-header">
             <div class="user-badge">
                 <i class="fas fa-user-plus"></i>
@@ -337,7 +359,7 @@ mysqli_close($conn);
 
             <div class="signup-links">
                 <p>Already have an account?</p>
-                <a href="user_login.html">
+                <a href="user_login.php">
                     <i class="fas fa-sign-in-alt"></i>
                     Sign In
                 </a>

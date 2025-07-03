@@ -163,69 +163,6 @@
             background: #047857;
         }
 
-        .features {
-            background: var(--surface);
-            padding: 4rem 2rem;
-        }
-
-        .features-content {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .features h2 {
-            text-align: center;
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 3rem;
-            color: var(--text-primary);
-        }
-
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-        }
-
-        .feature-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--border-radius-lg);
-            padding: 2rem;
-            text-align: center;
-            transition: var(--transition);
-        }
-
-        .feature-card:hover {
-            box-shadow: var(--shadow-lg);
-            transform: translateY(-4px);
-        }
-
-        .feature-icon {
-            width: 64px;
-            height: 64px;
-            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1.5rem;
-            font-size: 1.5rem;
-            color: white;
-        }
-
-        .feature-card h3 {
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            color: var(--text-primary);
-        }
-
-        .feature-card p {
-            color: var(--text-secondary);
-            line-height: 1.6;
-        }
-
         .footer {
             background: var(--text-primary);
             color: white;
@@ -261,14 +198,6 @@
             .main {
                 padding: 2rem 1rem;
             }
-
-            .features {
-                padding: 2rem 1rem;
-            }
-
-            .features h2 {
-                font-size: 2rem;
-            }
         }
     </style>
 </head>
@@ -280,11 +209,11 @@
                 <span>Transport Manager</span>
             </div>
             <div class="nav-links">
-                <a href="user_module/user_login.html" class="nav-link">
+                <a href="user_module/user_login.php" class="nav-link">
                     <i class="fas fa-sign-in-alt"></i>
                     User Login
                 </a>
-                <a href="admin_module/admin_login.html" class="nav-link admin">
+                <a href="admin_module/admin_login.php" class="nav-link admin">
                     <i class="fas fa-shield-alt"></i>
                     Admin Portal
                 </a>
@@ -297,72 +226,17 @@
             <h1>Transport Management System</h1>
             <p>Streamline your transport operations with our comprehensive management platform. Manage employees, schedules, routes, and more with ease.</p>
             <div class="cta-buttons">
-                <a href="user_module/user_login.html" class="cta-button">
+                <a href="user_module/user_login.php" class="cta-button">
                     <i class="fas fa-user"></i>
                     Employee Portal
                 </a>
-                <a href="admin_module/admin_login.html" class="cta-button admin">
+                <a href="admin_module/admin_login.php" class="cta-button admin">
                     <i class="fas fa-cog"></i>
                     Admin Dashboard
                 </a>
             </div>
         </div>
     </main>
-
-    <section class="features">
-        <div class="features-content">
-            <h2>Powerful Features</h2>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-users"></i>
-                    </div>
-                    <h3>Employee Management</h3>
-                    <p>Comprehensive employee database with detailed profiles, contact information, and role assignments.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-calendar-alt"></i>
-                    </div>
-                    <h3>Schedule Management</h3>
-                    <p>Efficient scheduling system for duty assignments, shift management, and route planning.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-route"></i>
-                    </div>
-                    <h3>Route Tracking</h3>
-                    <p>Monitor bus routes, track vehicle assignments, and optimize transportation efficiency.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-chart-bar"></i>
-                    </div>
-                    <h3>Analytics & Reports</h3>
-                    <p>Detailed reporting and analytics to track performance, attendance, and operational metrics.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-mobile-alt"></i>
-                    </div>
-                    <h3>Mobile Responsive</h3>
-                    <p>Access the system from any device with our fully responsive design and mobile-friendly interface.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-shield-alt"></i>
-                    </div>
-                    <h3>Secure & Reliable</h3>
-                    <p>Built with security in mind, featuring user authentication and data protection measures.</p>
-                </div>
-            </div>
-        </div>
-    </section>
 
     <footer class="footer">
         <p>&copy; 2025 Transport Management System. All rights reserved.</p>
