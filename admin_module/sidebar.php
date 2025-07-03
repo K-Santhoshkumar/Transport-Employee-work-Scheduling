@@ -8,6 +8,8 @@
         <li><a href="admin_employees.php"><i class="fas fa-user-tie"></i><span>Employees</span></a></li>
         <li><a href="admin_schedule.php"><i class="fas fa-calendar-alt"></i><span>Schedule</span></a></li>
         <li><a href="admin_reports.php"><i class="fas fa-chart-bar"></i><span>Reports</span></a></li>
+        <li><a href="admin_contacts.php"><i class="fas fa-envelope"></i><span>Messages</span></a></li>
+        <li><a href="admin_settings.php"><i class="fas fa-cog"></i><span>Settings</span></a></li>
     </ul>
     <div class="sidebar-footer">
         <a href="admin_logout.php" class="logout-btn">
@@ -15,4 +17,4 @@
             <span>Logout</span>
         </a>
     </div>
-</nav> 
+</nav>
