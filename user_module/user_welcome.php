@@ -1,10 +1,12 @@
 <?php 
+// Start output buffering to prevent header issues
 ob_start();
-if (headers_sent($file, $line)) {
-    die("⚠ Headers already sent in $file on line $line");
-}
+
+// Include middleware
 include('./user_middleware.php');
 middleware();
+
+// End output buffering
 ob_end_flush(); 
 ?>
 
@@ -35,6 +37,12 @@ ob_end_flush();
                     <li><a href="./user_welcome.php" class="<?= ($current_page == 'user_welcome.php') ? 'active' : '' ?>">
                         <i class="fas fa-home"></i> <span>Home</span>
                     </a></li>
+                    <li><a href="./user_dashboard.php" class="<?= ($current_page == 'user_dashboard.php') ? 'active' : '' ?>">
+                        <i class="fas fa-tachometer-alt"></i> <span>Dashboard</span>
+                    </a></li>
+                    <li><a href="./user_schedule.php" class="<?= ($current_page == 'user_schedule.php') ? 'active' : '' ?>">
+                        <i class="fas fa-calendar-alt"></i> <span>Schedule</span>
+                    </a></li>
                     <li><a href="./user_search.php" class="<?= ($current_page == 'user_search.php') ? 'active' : '' ?>">
                         <i class="fas fa-search"></i> <span>Search</span>
                     </a></li>
@@ -60,9 +68,9 @@ ob_end_flush();
             <div class="hero-content">
                 <h1>Welcome to Your Dashboard</h1>
                 <p>Manage your transport schedules, view duty allocations, and stay updated with the latest information from the transport department.</p>
-                <a href="./user_search.php" class="cta-button">
-                    <i class="fas fa-search"></i>
-                    Start Exploring
+                <a href="./user_dashboard.php" class="cta-button">
+                    <i class="fas fa-tachometer-alt"></i>
+                    Go to Dashboard
                 </a>
             </div>
         </section>

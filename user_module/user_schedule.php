@@ -36,16 +36,204 @@ $upcoming_result = mysqli_stmt_get_result($upcoming_stmt);
     <title>My Schedule - Transport Management</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="user.css">
+    <style>
+        .schedule-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        .schedule-card {
+            background: var(--surface);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+        .card-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            background: var(--surface-hover);
+        }
+        .card-header h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .card-content {
+            padding: 1.5rem;
+        }
+        .upcoming-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .upcoming-item {
+            padding: 1rem;
+            border: 1px solid var(--border);
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+            background: rgba(37, 99, 235, 0.02);
+        }
+        .upcoming-item:hover {
+            border-color: var(--primary-color);
+            background: rgba(37, 99, 235, 0.05);
+            transform: translateX(4px);
+        }
+        .upcoming-date {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+        .upcoming-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+        .table-container {
+            background: var(--surface);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .table th,
+        .table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.875rem;
+        }
+        .table th {
+            background: var(--surface-hover);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .table tbody tr:hover {
+            background: var(--surface-hover);
+        }
+        .date-badge {
+            background: var(--primary-color);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .shift-badge {
+            background: rgba(6, 182, 212, 0.1);
+            color: var(--accent-color);
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border: 1px solid var(--accent-color);
+        }
+        .duty-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .duty-driver {
+            background: rgba(5, 150, 105, 0.1);
+            color: var(--success-color);
+            border: 1px solid var(--success-color);
+        }
+        .duty-conductor {
+            background: rgba(245, 158, 11, 0.1);
+            color: #d97706;
+            border: 1px solid #d97706;
+        }
+        .duty-supervisor {
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+        }
+        .duty-maintenance {
+            background: rgba(220, 38, 38, 0.1);
+            color: var(--danger-color);
+            border: 1px solid var(--danger-color);
+        }
+        .duty-office-work {
+            background: rgba(100, 116, 139, 0.1);
+            color: var(--text-secondary);
+            border: 1px solid var(--text-secondary);
+        }
+        .no-data {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--text-light);
+        }
+        .no-data i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.3;
+        }
+    </style>
 </head>
 <body>
-    <?php include('user_nav.php'); ?>
-    <main style="flex:1;max-width:1200px;margin:0 auto;padding:2rem;width:100%;">
-        <section class="hero" style="background: linear-gradient(135deg, var(--primary-color), var(--accent-color)); color: white; padding: 3rem 2rem; border-radius: 20px; text-align: center; margin-bottom: 3rem; position: relative; overflow: hidden;">
-            <div class="hero-content" style="position:relative;z-index:1;">
+    <header>
+        <nav class="nav">
+            <div class="nav-container">
+                <a href="#" class="logo">
+                    <i class="fas fa-bus"></i>
+                    <span>Transport Manager</span>
+                </a>
+                
+                <button class="menu-toggle" onclick="toggleMenu()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                
+                <?php $current_page = basename($_SERVER['PHP_SELF']); ?>
+                <ul class="nav-links">
+                    <li><a href="./user_welcome.php" class="<?= ($current_page == 'user_welcome.php') ? 'active' : '' ?>">
+                        <i class="fas fa-home"></i> <span>Home</span>
+                    </a></li>
+                    <li><a href="./user_dashboard.php" class="<?= ($current_page == 'user_dashboard.php') ? 'active' : '' ?>">
+                        <i class="fas fa-tachometer-alt"></i> <span>Dashboard</span>
+                    </a></li>
+                    <li><a href="./user_schedule.php" class="<?= ($current_page == 'user_schedule.php') ? 'active' : '' ?>">
+                        <i class="fas fa-calendar-alt"></i> <span>Schedule</span>
+                    </a></li>
+                    <li><a href="./user_search.php" class="<?= ($current_page == 'user_search.php') ? 'active' : '' ?>">
+                        <i class="fas fa-search"></i> <span>Search</span>
+                    </a></li>
+                    <li><a href="./user_profile.php" class="<?= ($current_page == 'user_profile.php') ? 'active' : '' ?>">
+                        <i class="fas fa-user"></i> <span>Profile</span>
+                    </a></li>
+                    <li><a href="./user_contact.php" class="<?= ($current_page == 'user_contact.php') ? 'active' : '' ?>">
+                        <i class="fas fa-envelope"></i> <span>Contact</span>
+                    </a></li>
+                    <li><a href="./user_about.php" class="<?= ($current_page == 'user_about.php') ? 'active' : '' ?>">
+                        <i class="fas fa-info-circle"></i> <span>About</span>
+                    </a></li>
+                    <li><a href="./user_logout.php" class="logout">
+                        <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+                    </a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+    
+    <main>
+        <section class="hero">
+            <div class="hero-content">
                 <h1>Your Schedule</h1>
                 <p>View your upcoming and past schedules below.</p>
             </div>
         </section>
+        
         <div class="schedule-grid">
             <!-- Upcoming Schedules -->
             <div class="schedule-card">
@@ -80,7 +268,7 @@ $upcoming_result = mysqli_stmt_get_result($upcoming_stmt);
                         </div>
                     <?php else: ?>
                         <div class="no-data">
-                            <i class="fas fa-calendar-times" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;"></i>
+                            <i class="fas fa-calendar-times"></i>
                             <p>No upcoming schedules for this week</p>
                         </div>
                     <?php endif; ?>
@@ -107,7 +295,7 @@ $upcoming_result = mysqli_stmt_get_result($upcoming_stmt);
                     ?>
                     
                     <div style="display: grid; gap: 1rem;">
-                        <div style="text-align: center; padding: 1rem; background: rgba(99, 102, 241, 0.05); border-radius: var(--border-radius);">
+                        <div style="text-align: center; padding: 1rem; background: rgba(37, 99, 235, 0.05); border-radius: var(--border-radius);">
                             <div style="font-size: 2rem; font-weight: 800; color: var(--primary-color);"><?php echo $total_schedules; ?></div>
                             <div style="color: var(--text-secondary);">Total Schedules</div>
                         </div>
@@ -185,7 +373,7 @@ $upcoming_result = mysqli_stmt_get_result($upcoming_stmt);
                             <?php else: ?>
                                 <tr>
                                     <td colspan="6" class="no-data">
-                                        <i class="fas fa-calendar-times" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;"></i>
+                                        <i class="fas fa-calendar-times"></i>
                                         <p>No schedules assigned yet</p>
                                     </td>
                                 </tr>
@@ -196,7 +384,10 @@ $upcoming_result = mysqli_stmt_get_result($upcoming_stmt);
             </div>
         </div>
     </main>
-    <?php include('user_footer.php'); ?>
+    
+    <footer>
+        <p>&copy; 2025 Transport Management System. All rights reserved.</p>
+    </footer>
 
     <script>
         function toggleMenu() {
@@ -207,7 +398,6 @@ $upcoming_result = mysqli_stmt_get_result($upcoming_stmt);
         // Close menu when clicking outside
         document.addEventListener('click', function(e) {
             const nav = document.querySelector('.nav');
-            const menuToggle = document.querySelector('.menu-toggle');
             const navLinks = document.querySelector('.nav-links');
             
             if (!nav.contains(e.target)) {
